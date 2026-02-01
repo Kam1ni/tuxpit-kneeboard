@@ -1,0 +1,142 @@
+package kneeboardview
+
+import (
+	"fmt"
+	"net"
+	"os"
+	"tuxpit-kneeboard/config"
+	"tuxpit-kneeboard/inputlogger"
+
+	"github.com/mappu/miqt/qt"
+)
+
+type View struct {
+	currentCategoryIndex int
+	categories           []*imageViewCategory
+	aircraftCategory     *imageViewCategory
+	terrainCategory      *imageViewCategory
+	missionCategory      *imageViewCategory
+	widget               *qt.QWidget
+	inputLogger          *inputlogger.InputLogger
+	bookmarks            []bookmark
+	bookmarksContainer   *qt.QVBoxLayout
+	server               *net.UDPConn
+	config               config.Config
+	missionTmpDir        string
+}
+
+func (v View) Widget() *qt.QWidget {
+	return v.widget
+}
+
+func (v *View) NextImage() {
+	if v.categories[v.currentCategoryIndex].nextImage() {
+		v.NextCategory()
+	}
+}
+
+func (v *View) PreviousImage() {
+	if v.categories[v.currentCategoryIndex].previousImage() {
+		v.PreviousCategory()
+	}
+}
+
+func (v *View) NextCategory() {
+	v.currentCategoryIndex++
+	if v.currentCategoryIndex >= len(v.categories) {
+		v.currentCategoryIndex = 0
+	}
+	v.categories[v.currentCategoryIndex].currentImage = ""
+	fmt.Println(v.categories[v.currentCategoryIndex].currentImage)
+	v.NextImage()
+}
+
+func (v *View) PreviousCategory() {
+	v.currentCategoryIndex--
+	if v.currentCategoryIndex < 0 {
+		v.currentCategoryIndex = len(v.categories) - 1
+	}
+	v.categories[v.currentCategoryIndex].currentImage = ""
+	v.PreviousImage()
+}
+
+func (v *View) SelectCategory(catIndex int) {
+	v.currentCategoryIndex = catIndex
+	v.categories[v.currentCategoryIndex].currentImage = ""
+	v.categories[v.currentCategoryIndex].nextImage()
+}
+
+func (v *View) getSelectedCategory() *imageViewCategory {
+	return v.categories[v.currentCategoryIndex]
+}
+
+func CreateKneeboardView(conf config.Config) *View {
+	v := View{config: conf}
+	label := qt.NewQLabel3("")
+	label.SetScaledContents(true)
+
+	v.missionTmpDir = createMissionTmpDir()
+	v.aircraftCategory = NewImageViewCategory("Aircraft", GetDcsAircraftDir(conf, ""), label)
+	v.terrainCategory = NewImageViewCategory("Terrain", GetDcsTerrainDir(conf, ""), label)
+	v.missionCategory = NewImageViewCategory("Mission", v.missionTmpDir, label)
+
+	v.categories = []*imageViewCategory{
+		v.aircraftCategory,
+		v.terrainCategory,
+		//	v.missionCategory,
+	}
+
+	root := qt.NewQVBoxLayout2()
+	root.SetSpacing(0)
+
+	tabs := qt.NewQHBoxLayout2()
+
+	for i, cat := range v.categories {
+		btn := qt.NewQPushButton3(cat.name)
+		tabs.AddWidget(btn.QWidget)
+		btn.OnClicked(func() {
+			v.SelectCategory(i)
+		})
+	}
+
+	body := qt.NewQHBoxLayout2()
+	body.SetSpacing(0)
+	v.bookmarksContainer = qt.NewQVBoxLayout2()
+
+	bookmarksWidget := qt.NewQWidget2()
+	bookmarksWidget.SetLayout(v.bookmarksContainer.QLayout)
+	bookmarksWidget.SetFixedWidth(50)
+
+	v.createBookmarksBar()
+
+	body.AddWidget(bookmarksWidget)
+	body.AddWidget(label.QWidget)
+
+	topMenuWidget := qt.NewQWidget(nil)
+	topMenuWidget.SetLayout(tabs.QLayout)
+	topMenuWidget.SetFixedHeight(50)
+
+	bodyWidget := qt.NewQWidget(nil)
+	bodyWidget.SetLayout(body.QLayout)
+	root.AddWidget(topMenuWidget)
+	root.AddWidget(bodyWidget)
+
+	initInputLoggert(&v)
+
+	widget := qt.NewQWidget(nil)
+	widget.SetLayout(root.QLayout)
+	v.widget = widget
+
+	v.server = runServer(&v)
+	//	image := qt.NewQPixmap4("/home/kamil/Pictures/AI/Robokini.png")
+	//	label.SetPixmap(image)
+
+	v.NextImage()
+	return &v
+}
+
+func (v *View) Close() {
+	v.inputLogger.Close()
+	v.server.Close()
+	os.RemoveAll(v.missionTmpDir)
+}
