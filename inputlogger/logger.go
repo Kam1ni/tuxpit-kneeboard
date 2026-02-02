@@ -3,6 +3,7 @@ package inputlogger
 import (
 	"fmt"
 	"path"
+	"strings"
 
 	"github.com/MarinX/keylogger"
 	"github.com/holoplot/go-evdev"
@@ -77,7 +78,12 @@ func newKeyboardLogger(inputLogger *InputLogger) *logger {
 	for _, keyboard := range allKeyboards {
 		kb, err := keylogger.New(path.Join("/dev/input", keyboard))
 		if err != nil {
-			panic("Failed to open " + keyboard + "\n" + err.Error())
+			if strings.Contains(strings.ToLower(err.Error()), "permission denied") {
+				fmt.Printf("Can't open device %s\n%s\nSkipping...\n", keyboard, err.Error())
+				continue
+			} else {
+				panic("Failed to open " + keyboard + "\n" + err.Error())
+			}
 		}
 
 		result.keyboardDevices = append(result.keyboardDevices, kb)
@@ -102,7 +108,12 @@ func newLogger(inputLogger *InputLogger, deviceName string) *logger {
 		}
 		logger.device, err = evdev.Open(item.Path)
 		if err != nil {
-			panic("Failed to open " + item.Name + "\n" + err.Error())
+			if strings.Contains(strings.ToLower(err.Error()), "permission denied") {
+				fmt.Printf("Can't open device %s\n%s\nSkipping...\n", item.Name, err.Error())
+				continue
+			} else {
+				panic("Failed to open " + item.Name + "\n" + err.Error())
+			}
 		}
 
 		go logger.run()
