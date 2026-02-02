@@ -69,6 +69,7 @@ func (l *logger) runKeyboard(keyboard *keylogger.KeyLogger, pth string) {
 }
 
 func newKeyboardLogger(inputLogger *InputLogger) *logger {
+	// TODO: Ensure user is part of the input group
 	fmt.Println("Creating new keyboard logger")
 	result := logger{name: "_KEYBOARD_", inputLogger: inputLogger}
 	allKeyboards, err := findKeyboards()

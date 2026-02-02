@@ -42,9 +42,14 @@ func (v *View) PreviousImage() {
 }
 
 func (v *View) NextCategory() {
-	v.currentCategoryIndex++
-	if v.currentCategoryIndex >= len(v.categories) {
-		v.currentCategoryIndex = 0
+	for i := 0; i < len(v.categories); i++ {
+		v.currentCategoryIndex++
+		if v.currentCategoryIndex >= len(v.categories) {
+			v.currentCategoryIndex = 0
+		}
+		if len(v.getSelectedCategory().sortedImages) != 0 {
+			break
+		}
 	}
 	v.categories[v.currentCategoryIndex].currentImage = ""
 	fmt.Println(v.categories[v.currentCategoryIndex].currentImage)
@@ -52,15 +57,23 @@ func (v *View) NextCategory() {
 }
 
 func (v *View) PreviousCategory() {
-	v.currentCategoryIndex--
-	if v.currentCategoryIndex < 0 {
-		v.currentCategoryIndex = len(v.categories) - 1
+	for i := 0; i < len(v.categories); i++ {
+		v.currentCategoryIndex--
+		if v.currentCategoryIndex < 0 {
+			v.currentCategoryIndex = len(v.categories) - 1
+		}
+		if len(v.getSelectedCategory().sortedImages) != 0 {
+			break
+		}
 	}
 	v.categories[v.currentCategoryIndex].currentImage = ""
 	v.PreviousImage()
 }
 
 func (v *View) SelectCategory(catIndex int) {
+	if len(v.categories[catIndex].sortedImages) == 0 {
+		return
+	}
 	v.currentCategoryIndex = catIndex
 	v.categories[v.currentCategoryIndex].currentImage = ""
 	v.categories[v.currentCategoryIndex].nextImage()
@@ -83,7 +96,7 @@ func CreateKneeboardView(conf config.Config) *View {
 	v.categories = []*imageViewCategory{
 		v.aircraftCategory,
 		v.terrainCategory,
-		//	v.missionCategory,
+		v.missionCategory,
 	}
 
 	root := qt.NewQVBoxLayout2()
