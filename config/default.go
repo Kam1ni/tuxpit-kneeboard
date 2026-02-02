@@ -14,7 +14,7 @@ func GetDefaultConfig() Config {
 		Keybinds: Keybinds{
 			NextPage: []Keybind{
 				{
-					DeviceName: "_KEYBOARD",
+					DeviceName: "_KEYBOARD_",
 					Key:        106,
 				},
 			},
