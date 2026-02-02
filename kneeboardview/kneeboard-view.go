@@ -149,7 +149,8 @@ func CreateKneeboardView(conf config.Config) *View {
 }
 
 func (v *View) Close() {
+	fmt.Println("Removing", v.missionTmpDir)
+	os.RemoveAll(v.missionTmpDir)
 	v.inputLogger.Close()
 	v.server.Close()
-	os.RemoveAll(v.missionTmpDir)
 }

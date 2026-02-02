@@ -68,6 +68,9 @@ function sendMissionInfo()
 	if success and result then
 		log.write(LOG_KEY, log.INFO, "Mission: " .. result)
 		send("mission", result)
+	else
+		log.write(LOG_KEY, log.INFO, "Mission: from lastmissiontrack.trk")
+		send("mission", "--from-last-mission-track-file--")
 	end
 end
 

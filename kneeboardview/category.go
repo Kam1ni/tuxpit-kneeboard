@@ -6,6 +6,7 @@ import (
 	"path"
 	"regexp"
 	"sort"
+	"strings"
 	"tuxpit-kneeboard/config"
 
 	"github.com/mappu/miqt/qt"
@@ -18,13 +19,27 @@ func GetDcsAircraftDir(conf config.Config, aircraft string) string {
 }
 
 func GetDcsTerrainDir(conf config.Config, terrain string) string {
+	baseDir := path.Join(conf.DcsInstallPath, "Mods/terrains", terrain)
+	entries, err := os.ReadDir(baseDir)
+	if err != nil {
+		fmt.Printf("Failed to read base terrain dir\n%s", err.Error())
+	}
+	for _, entry := range entries {
+		if strings.ToLower(entry.Name()) == "kneeboard" && entry.IsDir() {
+			return path.Join(conf.DcsInstallPath, "Mods/terrains", terrain, entry.Name())
+		}
+	}
+
 	return path.Join(conf.DcsInstallPath, "Mods/terrains", terrain, "Kneeboard")
 }
 
 func createMissionTmpDir() string {
-	tempDirPath, err := os.MkdirTemp("", "tuxpit-kneeboard-mission")
+	tempDirPath := path.Join(os.TempDir(), "tuxpit-kneeboard-mission")
+	err := os.Mkdir(tempDirPath, os.ModePerm)
 	if err != nil {
-		panic("Failed to create tmp dir\n" + err.Error())
+		if !strings.Contains(err.Error(), "file exists") {
+			panic("Failed to create tmp dir\n" + err.Error())
+		}
 	}
 	return tempDirPath
 }
@@ -40,7 +55,6 @@ type imageViewCategory struct {
 func (i *imageViewCategory) loadImages() {
 	result, err := os.ReadDir(i.dir)
 	if err != nil {
-		// TODO: Add placeholder image
 		fmt.Println("Could not load images", err.Error())
 		i.sortedImages = []string{}
 		return
@@ -57,6 +71,7 @@ func (i *imageViewCategory) loadImages() {
 	}
 
 	sort.Strings(list)
+	fmt.Println(list)
 	i.sortedImages = list
 }
 
