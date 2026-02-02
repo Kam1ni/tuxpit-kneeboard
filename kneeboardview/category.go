@@ -71,7 +71,6 @@ func (i *imageViewCategory) loadImages() {
 	}
 
 	sort.Strings(list)
-	fmt.Println(list)
 	i.sortedImages = list
 }
 

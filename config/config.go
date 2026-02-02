@@ -9,9 +9,18 @@ import (
 )
 
 type Config struct {
+	ComesFromFile     bool     `json:"-"`
 	Keybinds          Keybinds `json:"keybinds"`
 	DcsInstallPath    string   `json:"dcsInstallPath"`
 	DcsSavedGamesPath string   `json:"dcsSavedGamesPath"`
+}
+
+func (c Config) Clone() Config {
+	return Config{
+		Keybinds:          c.Keybinds.Clone(),
+		DcsInstallPath:    c.DcsInstallPath,
+		DcsSavedGamesPath: c.DcsSavedGamesPath,
+	}
 }
 
 func GetDefaultConfigPath() string {
@@ -22,17 +31,17 @@ func GetDefaultConfigPath() string {
 	return path.Join(configDir, "tuxpit-kneeboard/config.json")
 }
 
-func ensureConfigFileExists() error {
-	configPath := GetDefaultConfigPath()
-	stats, err := os.Stat(configPath)
+func ensureConfigDirExists() error {
+	configDirPath := path.Dir(GetDefaultConfigPath())
+	stats, err := os.Stat(configDirPath)
 	if err == nil {
-		if stats.IsDir() {
-			return fmt.Errorf("%s is a directory. Json file was expected", configPath)
+		if !stats.IsDir() {
+			return fmt.Errorf("%s is not a directory", configDirPath)
 		}
 		return nil
 	}
 
-	parts := strings.Split(path.Dir(configPath), "/")
+	parts := strings.Split(configDirPath, "/")
 	currentPath := "/"
 	for _, part := range parts {
 		if part == "" {
@@ -55,10 +64,6 @@ func ensureConfigFileExists() error {
 		}
 	}
 
-	err = WriteConfig(GetDefaultConfig())
-	if err != nil {
-		return fmt.Errorf("Failed to create default\n%s", err.Error())
-	}
 	return nil
 }
 
@@ -77,9 +82,14 @@ func WriteConfig(config Config) error {
 
 // Reads the config from  ~/.config/tuxpit-kneeboard/config.json
 func ReadConfig() (Config, error) {
-	err := ensureConfigFileExists()
+	err := ensureConfigDirExists()
 	if err != nil {
 		return Config{}, err
+	}
+
+	_, err = os.Stat(GetDefaultConfigPath())
+	if err != nil {
+		return GetDefaultConfig(), nil
 	}
 
 	configPath := GetDefaultConfigPath()
@@ -93,5 +103,6 @@ func ReadConfig() (Config, error) {
 	if err != nil {
 		return Config{}, fmt.Errorf("Config json at %s has errors\n%s", configPath, err.Error())
 	}
+	config.ComesFromFile = true
 	return config, nil
 }

@@ -23,6 +23,7 @@ type View struct {
 	server               *net.UDPConn
 	config               config.Config
 	missionTmpDir        string
+	closed               bool
 }
 
 func (v View) Widget() *qt.QWidget {
@@ -131,8 +132,19 @@ func CreateKneeboardView(conf config.Config) *View {
 
 	bodyWidget := qt.NewQWidget(nil)
 	bodyWidget.SetLayout(body.QLayout)
+
+	bottomToolBar := createBottomToolbar(&v)
+	if bottomToolBar == nil {
+		v.Close()
+		return nil
+	}
+	bottomMenuWidget := qt.NewQWidget(nil)
+	bottomMenuWidget.SetLayout(bottomToolBar.QLayout)
+	bottomMenuWidget.SetFixedHeight(50)
+
 	root.AddWidget(topMenuWidget)
 	root.AddWidget(bodyWidget)
+	root.AddWidget(bottomMenuWidget)
 
 	initInputLoggert(&v)
 
@@ -149,8 +161,16 @@ func CreateKneeboardView(conf config.Config) *View {
 }
 
 func (v *View) Close() {
+	if v.closed {
+		return
+	}
+	v.closed = true
+	if v.server != nil {
+		v.server.Close()
+	}
 	fmt.Println("Removing", v.missionTmpDir)
 	os.RemoveAll(v.missionTmpDir)
-	v.inputLogger.Close()
-	v.server.Close()
+	if v.inputLogger != nil {
+		v.inputLogger.Close()
+	}
 }

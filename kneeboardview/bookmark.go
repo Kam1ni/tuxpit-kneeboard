@@ -85,13 +85,6 @@ func (v *View) createBookmarksBar() {
 		btn.SetStyleSheet(fmt.Sprintf("background-color: %s; color: %s;", bm.colors.backgroundColor, bm.colors.foregroundColor))
 		v.bookmarksContainer.AddWidget(btn.QWidget)
 	}
-
-	v.bookmarksContainer.AddStretch()
-	clearBtn := qt.NewQPushButton3("Clear")
-	clearBtn.OnClicked(func() {
-		v.removeAllBookmarks()
-	})
-	v.bookmarksContainer.AddWidget(clearBtn.QWidget)
 }
 
 func (v *View) getCurrentBookmarkIndex() int {

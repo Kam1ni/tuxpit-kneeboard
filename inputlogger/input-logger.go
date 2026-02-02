@@ -28,6 +28,9 @@ func NewInputLogger(deviceNames []string, callback InputLoggerEventHandler) *Inp
 
 func (i *InputLogger) Close() {
 	for _, logger := range i.loggers {
+		if logger.closed {
+			continue
+		}
 		logger.close()
 	}
 }

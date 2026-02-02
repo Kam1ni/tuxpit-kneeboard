@@ -22,11 +22,17 @@ func main() {
 	}
 
 	view := kneeboardview.CreateKneeboardView(conf)
+	if view == nil {
+		return
+	}
 	defer view.Close()
 	mainWindow.SetCentralWidget(view.Widget())
 	mainWindow.SetMinimumHeight(100)
 	mainWindow.SetMinimumWidth(100)
 	mainWindow.Show()
+	mainWindow.OnCloseEvent(func(super func(event *qt.QCloseEvent), event *qt.QCloseEvent) {
+		qt.QCoreApplication_Quit()
+	})
 	qt.QApplication_Exec()
 
 	fmt.Println("OK")

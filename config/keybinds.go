@@ -41,3 +41,22 @@ func (k Keybinds) GetAllDeviceNames() []string {
 
 	return allNames
 }
+
+func (k Keybinds) Clone() Keybinds {
+	cloneBinds := func(binds []Keybind) []Keybind {
+		result := make([]Keybind, len(binds))
+		copy(result, binds)
+		return result
+	}
+
+	return Keybinds{
+		NextPage:         cloneBinds(k.NextPage),
+		PreviousPage:     cloneBinds(k.PreviousPage),
+		NextCategory:     cloneBinds(k.NextCategory),
+		PreviousCategory: cloneBinds(k.PreviousCategory),
+		ToggleBookmark:   cloneBinds(k.ToggleBookmark),
+		NextBookmark:     cloneBinds(k.NextBookmark),
+		PreviousBookmark: cloneBinds(k.PreviousBookmark),
+		ToggleWindow:     cloneBinds(k.ToggleWindow),
+	}
+}
