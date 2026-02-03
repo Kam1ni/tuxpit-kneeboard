@@ -21,7 +21,7 @@ func (c Config) Clone() Config {
 		Keybinds:          c.Keybinds.Clone(),
 		DcsInstallPath:    c.DcsInstallPath,
 		DcsSavedGamesPath: c.DcsSavedGamesPath,
-		ServerPort:        19021,
+		ServerPort:        c.ServerPort,
 	}
 }
 

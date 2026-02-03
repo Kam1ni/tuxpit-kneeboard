@@ -38,5 +38,6 @@ func GetDefaultConfig() Config {
 		},
 		DcsInstallPath:    path.Join(homeDir, ".steam/steam/steamapps/common/DCSWorld"),
 		DcsSavedGamesPath: path.Join(homeDir, ".steam/steam/steamapps/compatdata/223750/drive_c/users/steamusers/Saved Games/DCS"),
+		ServerPort:        19021,
 	}
 }
