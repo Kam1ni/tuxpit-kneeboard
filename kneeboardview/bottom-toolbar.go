@@ -1,6 +1,7 @@
 package kneeboardview
 
 import (
+	"fmt"
 	"tuxpit-kneeboard/settingsview"
 
 	"github.com/mappu/miqt/qt"
@@ -19,11 +20,11 @@ func createBottomToolbar(v *View) *qt.QHBoxLayout {
 
 	settingsButton := qt.NewQPushButton3(" Settings")
 	settingsButton.OnClicked(func() {
-		settingsview.CreateSettingsWindow(&v.config)
+		showSettings(v)
 	})
 
 	if !v.config.ComesFromFile {
-		settingsview.CreateSettingsWindow(&v.config)
+		showSettings(v)
 		if !v.config.ComesFromFile {
 			return nil
 		}
@@ -31,4 +32,15 @@ func createBottomToolbar(v *View) *qt.QHBoxLayout {
 
 	root.AddWidget(settingsButton.QWidget)
 	return root
+}
+
+func showSettings(v *View) {
+	settingsview.CreateSettingsWindow(&v.config)
+	if v.server != nil {
+		err := v.server.Close()
+		if err != nil {
+			fmt.Println("Failed to close UDP server", err.Error())
+		}
+	}
+	v.server = createServer(v)
 }

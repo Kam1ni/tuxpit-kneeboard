@@ -13,6 +13,7 @@ type Config struct {
 	Keybinds          Keybinds `json:"keybinds"`
 	DcsInstallPath    string   `json:"dcsInstallPath"`
 	DcsSavedGamesPath string   `json:"dcsSavedGamesPath"`
+	ServerPort        uint16   `json:"serverPort"`
 }
 
 func (c Config) Clone() Config {
@@ -20,6 +21,7 @@ func (c Config) Clone() Config {
 		Keybinds:          c.Keybinds.Clone(),
 		DcsInstallPath:    c.DcsInstallPath,
 		DcsSavedGamesPath: c.DcsSavedGamesPath,
+		ServerPort:        19021,
 	}
 }
 

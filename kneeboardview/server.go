@@ -16,9 +16,8 @@ import (
 var savedGamesPath = regexp.MustCompile(`^C:\\users\\steamusers\\Saved Games\\DCS`)
 var validMissionKneeboardPath = regexp.MustCompile(`^kneeboard\/images\/.*\.(png|jpe?g)$`)
 
-func runServer(view *View) *net.UDPConn {
-
-	udpAddr, err := net.ResolveUDPAddr("udp", ":8912")
+func createServer(view *View) *net.UDPConn {
+	udpAddr, err := net.ResolveUDPAddr("udp", fmt.Sprintf(":%d", view.config.ServerPort))
 	if err != nil {
 		panic("Failed to resolve udp address for server\n" + err.Error())
 	}
@@ -53,6 +52,8 @@ func runServer(view *View) *net.UDPConn {
 			}
 		}
 	}()
+
+	fmt.Println("Created udp server on address", udpAddr)
 
 	return conn
 }

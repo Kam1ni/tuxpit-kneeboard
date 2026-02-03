@@ -35,7 +35,7 @@ end
 
 function send(toSetProperty, value)
 	local udp = socket.udp()
-	udp:setpeername("127.0.0.1", 8912)
+	udp:setpeername("127.0.0.1", serverPort)
 	udp:send(toSetProperty .. ":" .. value)
 end
 

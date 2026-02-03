@@ -10,7 +10,7 @@ import (
 )
 
 //go:embed tuxpit-kneeboard.lua
-var dscHookScript string
+var dcsHookScript string
 
 func ensureDcsPluginIsInstalled(conf config.Config) error {
 	entries, err := os.ReadDir(conf.DcsSavedGamesPath)
@@ -38,6 +38,10 @@ func ensureDcsPluginIsInstalled(conf config.Config) error {
 	}
 
 	found = false
+	entries, err = os.ReadDir(pth)
+	if err != nil {
+		return fmt.Errorf("Failed to read %s\n%s", pth, err.Error())
+	}
 	for _, entry := range entries {
 		if strings.ToLower(entry.Name()) == "hooks" {
 			found = true
@@ -54,6 +58,9 @@ func ensureDcsPluginIsInstalled(conf config.Config) error {
 		}
 	}
 
+	// add the server port to the script
+	scriptSrc := fmt.Sprintf("local serverPort = %d\n%s", conf.ServerPort, dcsHookScript)
+
 	pth = path.Join(pth, "tuxpit-kneeboard.lua")
-	return os.WriteFile(pth, []byte(dscHookScript), os.ModePerm)
+	return os.WriteFile(pth, []byte(scriptSrc), os.ModePerm)
 }

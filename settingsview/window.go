@@ -23,8 +23,17 @@ func CreateSettingsWindow(conf *config.Config) {
 		tempConf.DcsSavedGamesPath = s
 	})
 
+	portNumberInput := qt.NewQSpinBox2()
+	portNumberInput.SetValue(int(tempConf.ServerPort))
+	portNumberInput.SetMinimum(1)
+	portNumberInput.SetMaximum(65535)
+	portNumberInput.OnValueChanged(func(value int) {
+		tempConf.ServerPort = uint16(value)
+	})
+
 	content.AddWidget(gameInstallDirInput.QWidget())
 	content.AddWidget(savedGamesDirInput.QWidget())
+	content.AddWidget(widgets.NewLabeledInput("Server port to communicate with DCS", portNumberInput.QWidget).QWidget())
 
 	confirmButtons := widgets.CreateFormConfirmButtons()
 	content.AddWidget(confirmButtons.QWidget())

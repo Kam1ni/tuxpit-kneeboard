@@ -152,7 +152,7 @@ func CreateKneeboardView(conf config.Config) *View {
 	widget.SetLayout(root.QLayout)
 	v.widget = widget
 
-	v.server = runServer(&v)
+	v.server = createServer(&v)
 	//	image := qt.NewQPixmap4("/home/kamil/Pictures/AI/Robokini.png")
 	//	label.SetPixmap(image)
 
