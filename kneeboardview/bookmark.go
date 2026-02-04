@@ -85,6 +85,8 @@ func (v *View) createBookmarksBar() {
 		btn.SetStyleSheet(fmt.Sprintf("background-color: %s; color: %s;", bm.colors.backgroundColor, bm.colors.foregroundColor))
 		v.bookmarksContainer.AddWidget(btn.QWidget)
 	}
+
+	v.bookmarksContainer.AddStretch()
 }
 
 func (v *View) getCurrentBookmarkIndex() int {
