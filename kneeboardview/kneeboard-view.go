@@ -24,6 +24,7 @@ type View struct {
 	config               config.Config
 	missionTmpDir        string
 	closed               bool
+	mainWindow           *qt.QMainWindow
 }
 
 func (v View) Widget() *qt.QWidget {
@@ -84,8 +85,8 @@ func (v *View) getSelectedCategory() *imageViewCategory {
 	return v.categories[v.currentCategoryIndex]
 }
 
-func CreateKneeboardView(conf config.Config) *View {
-	v := View{config: conf}
+func CreateKneeboardView(conf config.Config, mainWindow *qt.QMainWindow) *View {
+	v := View{config: conf, mainWindow: mainWindow}
 	label := qt.NewQLabel3("")
 	label.SetScaledContents(true)
 

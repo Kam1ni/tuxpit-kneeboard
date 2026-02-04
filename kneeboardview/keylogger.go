@@ -39,7 +39,11 @@ func onKeyPress(v *View, deviceName string, key int) {
 		v.PreviousBookmark()
 	}
 	if KeybindMatches(v.config.Keybinds.ToggleWindow, deviceName, key) {
-
+		if v.mainWindow.IsHidden() {
+			v.mainWindow.Show()
+		} else {
+			v.mainWindow.Hide()
+		}
 	}
 }
 

@@ -21,7 +21,7 @@ func main() {
 		panic("Failed to read config\n" + err.Error())
 	}
 
-	view := kneeboardview.CreateKneeboardView(conf)
+	view := kneeboardview.CreateKneeboardView(conf, mainWindow)
 	if view == nil {
 		return
 	}
