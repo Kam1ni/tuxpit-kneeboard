@@ -7,7 +7,7 @@ import (
 	"github.com/mappu/miqt/qt"
 )
 
-func createBottomToolbar(v *View) *qt.QHBoxLayout {
+func createBottomToolbar(v *View) *qt.QWidget {
 	root := qt.NewQHBoxLayout2()
 
 	clearBtn := qt.NewQPushButton3(" Clear bookmarks")
@@ -31,7 +31,11 @@ func createBottomToolbar(v *View) *qt.QHBoxLayout {
 	}
 
 	root.AddWidget(settingsButton.QWidget)
-	return root
+
+	widget := qt.NewQWidget(nil)
+	widget.SetLayout(root.QLayout)
+	widget.SetSizePolicy2(qt.QSizePolicy__Expanding, qt.QSizePolicy__Minimum)
+	return widget
 }
 
 func showSettings(v *View) {
@@ -43,4 +47,9 @@ func showSettings(v *View) {
 		}
 	}
 	v.server = createServer(v)
+	if v.inputLogger != nil {
+		v.inputLogger.Close()
+		v.inputLogger = nil
+	}
+	initInputLoggert(v)
 }

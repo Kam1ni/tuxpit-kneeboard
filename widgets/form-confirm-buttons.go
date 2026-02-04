@@ -11,11 +11,11 @@ type FormConfirmButtons struct {
 func (f *FormConfirmButtons) QWidget() *qt.QWidget {
 	widget := qt.NewQWidget(nil)
 	widget.SetLayout(f.container.QLayout)
-	widget.SetFixedHeight(75)
+	widget.SetSizePolicy2(qt.QSizePolicy__Expanding, qt.QSizePolicy__Minimum)
 	return widget
 }
 
-func CreateFormConfirmButtons() *FormConfirmButtons {
+func NewFormConfirmButtons() *FormConfirmButtons {
 	result := FormConfirmButtons{}
 	result.confirmButton = qt.NewQPushButton3(" Confirm")
 	result.cancelButton = qt.NewQPushButton3(" Cancel")

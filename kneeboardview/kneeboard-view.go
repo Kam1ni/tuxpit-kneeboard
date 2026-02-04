@@ -103,16 +103,6 @@ func CreateKneeboardView(conf config.Config) *View {
 	root := qt.NewQVBoxLayout2()
 	root.SetSpacing(0)
 
-	tabs := qt.NewQHBoxLayout2()
-
-	for i, cat := range v.categories {
-		btn := qt.NewQPushButton3(cat.name)
-		tabs.AddWidget(btn.QWidget)
-		btn.OnClicked(func() {
-			v.SelectCategory(i)
-		})
-	}
-
 	body := qt.NewQHBoxLayout2()
 	body.SetSpacing(0)
 	v.bookmarksContainer = qt.NewQVBoxLayout2()
@@ -126,25 +116,19 @@ func CreateKneeboardView(conf config.Config) *View {
 	body.AddWidget(bookmarksWidget)
 	body.AddWidget(label.QWidget)
 
-	topMenuWidget := qt.NewQWidget(nil)
-	topMenuWidget.SetLayout(tabs.QLayout)
-	topMenuWidget.SetFixedHeight(50)
-
 	bodyWidget := qt.NewQWidget(nil)
 	bodyWidget.SetLayout(body.QLayout)
+	bodyWidget.SetSizePolicy2(qt.QSizePolicy__Expanding, qt.QSizePolicy__Expanding)
 
 	bottomToolBar := createBottomToolbar(&v)
 	if bottomToolBar == nil {
 		v.Close()
 		return nil
 	}
-	bottomMenuWidget := qt.NewQWidget(nil)
-	bottomMenuWidget.SetLayout(bottomToolBar.QLayout)
-	bottomMenuWidget.SetFixedHeight(50)
 
-	root.AddWidget(topMenuWidget)
+	root.AddWidget(createTabs(&v))
 	root.AddWidget(bodyWidget)
-	root.AddWidget(bottomMenuWidget)
+	root.AddWidget(bottomToolBar)
 
 	initInputLoggert(&v)
 

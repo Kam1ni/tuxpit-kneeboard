@@ -21,21 +21,34 @@ func findKeyboards() ([]string, error) {
 	devices := []string{}
 	for _, file := range files {
 		fullPath := path.Join("/dev/input", file.Name())
-		if !validInputDeviceName.MatchString(fullPath) {
-			continue
-		}
-		cmd := exec.Command("udevadm", "info", "-q", "property", "-n", fullPath)
-		buffer := bytes.NewBuffer(nil)
-		cmd.Stdout = buffer
-		err := cmd.Run()
+		isKeyboard, err := checkFileIsKeyboard(fullPath, false)
 		if err != nil {
-			return nil, fmt.Errorf("Failed to run udevadm for device %s\n%s", fullPath, err.Error())
+			return nil, err
 		}
-
-		result := buffer.String()
-		if strings.Contains(result, "\nID_INPUT_KEYBOARD=1\n") {
+		if isKeyboard {
+			fmt.Println("Adding keyboard", file.Name())
 			devices = append(devices, file.Name())
 		}
 	}
 	return devices, nil
+}
+
+func checkFileIsKeyboard(fullPath string, includeMice bool) (bool, error) {
+	if !validInputDeviceName.MatchString(fullPath) {
+		return false, nil
+	}
+	cmd := exec.Command("udevadm", "info", "-q", "property", "-n", fullPath)
+	buffer := bytes.NewBuffer(nil)
+	cmd.Stdout = buffer
+	err := cmd.Run()
+	if err != nil {
+		return false, fmt.Errorf("Failed to run udevadm for device %s\n%s", fullPath, err.Error())
+	}
+
+	result := buffer.String()
+	isKeyboard := strings.Contains(result, "\nID_INPUT_KEYBOARD=1\n")
+	if !isKeyboard && includeMice {
+		isKeyboard = strings.Contains(result, "\nID_INPUT_MOUSE=1\n")
+	}
+	return isKeyboard, nil
 }

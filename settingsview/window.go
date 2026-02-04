@@ -12,31 +12,16 @@ func CreateSettingsWindow(conf *config.Config) {
 
 	tempConf := conf.Clone()
 
-	content := qt.NewQFormLayout2()
-	gameInstallDirInput := widgets.NewFileInput3(tempConf.DcsInstallPath, "DCS Install directory")
-	gameInstallDirInput.OnInput(func(s string) {
-		tempConf.DcsInstallPath = s
-	})
+	confirmButtons := widgets.NewFormConfirmButtons()
 
-	savedGamesDirInput := widgets.NewFileInput3(tempConf.DcsSavedGamesPath, "DCS Saved games directory")
-	savedGamesDirInput.OnInput(func(s string) {
-		tempConf.DcsSavedGamesPath = s
-	})
+	rootContainer := qt.NewQVBoxLayout2()
 
-	portNumberInput := qt.NewQSpinBox2()
-	portNumberInput.SetValue(int(tempConf.ServerPort))
-	portNumberInput.SetMinimum(1)
-	portNumberInput.SetMaximum(65535)
-	portNumberInput.OnValueChanged(func(value int) {
-		tempConf.ServerPort = uint16(value)
-	})
+	tabs := qt.NewQTabWidget2()
+	tabs.AddTab(createGeneralSettingsTab(&tempConf), "General")
+	tabs.AddTab(createKeybindsTabs(&tempConf), "Keybinds")
 
-	content.AddWidget(gameInstallDirInput.QWidget())
-	content.AddWidget(savedGamesDirInput.QWidget())
-	content.AddWidget(widgets.NewLabeledInput("Server port to communicate with DCS", portNumberInput.QWidget).QWidget())
-
-	confirmButtons := widgets.CreateFormConfirmButtons()
-	content.AddWidget(confirmButtons.QWidget())
+	rootContainer.AddWidget(tabs.QWidget)
+	rootContainer.AddWidget(confirmButtons.QWidget())
 
 	confirmButtons.OnConfirm(func() {
 		err := ensureDcsPluginIsInstalled(tempConf)
@@ -58,9 +43,8 @@ func CreateSettingsWindow(conf *config.Config) {
 		confirmButtons.SetCancelDisabled(true)
 	}
 
-	root.SetLayout(content.QLayout)
-
+	root.SetLayout(rootContainer.QLayout)
 	root.SetWindowTitle("Tuxpit Kneeboard Settings")
-
+	root.SetFixedSize2(640, 480)
 	root.Exec()
 }

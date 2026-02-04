@@ -1,6 +1,11 @@
 package config
 
-import "slices"
+import (
+	"fmt"
+	"slices"
+
+	"github.com/MarinX/keylogger"
+)
 
 type Keybind struct {
 	DeviceName string `json:"deviceName"`
@@ -59,4 +64,11 @@ func (k Keybinds) Clone() Keybinds {
 		PreviousBookmark: cloneBinds(k.PreviousBookmark),
 		ToggleWindow:     cloneBinds(k.ToggleWindow),
 	}
+}
+
+func (k Keybind) ToString() string {
+	if k.DeviceName == "_KEYBOARD_" {
+		return fmt.Sprintf("Keyboard: Key %s", (&keylogger.InputEvent{Code: uint16(k.Key), Type: keylogger.EvKey}).KeyString())
+	}
+	return fmt.Sprintf("%s: Key %d", k.DeviceName, k.Key)
 }

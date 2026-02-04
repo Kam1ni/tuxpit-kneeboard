@@ -36,7 +36,8 @@ func (l *logger) run() {
 		}
 		event, err := l.device.ReadOne()
 		if err != nil {
-			panic("Failed to read event from " + l.name + "\n" + err.Error())
+			fmt.Println("Failed to read event from " + l.name + "\n" + err.Error())
+			return
 		}
 		if event.Type != evdev.EV_KEY {
 			continue
@@ -44,6 +45,7 @@ func (l *logger) run() {
 		if event.Value != 1 {
 			continue
 		}
+		fmt.Println("Got input", l.name, event.Code)
 		l.inputLogger.handler(l.name, int(event.Code))
 	}
 }
@@ -60,6 +62,10 @@ func (l *logger) runKeyboard(keyboard *keylogger.KeyLogger, pth string) {
 			switch event.Type {
 			case keylogger.EvKey:
 				if event.KeyRelease() {
+					fmt.Println("Keyboard input")
+					if event.Code > 200 { // Ignore mouse events
+						return
+					}
 					l.inputLogger.handler("_KEYBOARD_", int(event.Code))
 				}
 			}
@@ -103,22 +109,32 @@ func newLogger(inputLogger *InputLogger, deviceName string) *logger {
 			continue
 		}
 
-		logger := logger{
-			name:        item.Name,
-			inputLogger: inputLogger,
-		}
-		logger.device, err = evdev.Open(item.Path)
-		if err != nil {
-			if strings.Contains(strings.ToLower(err.Error()), "permission denied") {
-				fmt.Printf("Can't open device %s\n%s\nSkipping...\n", item.Name, err.Error())
-				continue
-			} else {
-				panic("Failed to open " + item.Name + "\n" + err.Error())
-			}
+		logger := newLoggerFromEvdevDevice(inputLogger, item)
+		if logger == nil {
+			continue
 		}
 
-		go logger.run()
-		return &logger
+		return logger
 	}
 	return nil
+}
+
+func newLoggerFromEvdevDevice(inputLogger *InputLogger, item evdev.InputPath) *logger {
+	var err error
+	logger := logger{
+		name:        item.Name,
+		inputLogger: inputLogger,
+	}
+	logger.device, err = evdev.Open(item.Path)
+	if err != nil {
+		if strings.Contains(strings.ToLower(err.Error()), "permission denied") {
+			fmt.Printf("Can't open device %s\n%s\nSkipping...\n", item.Name, err.Error())
+			return nil
+		} else {
+			panic("Failed to open " + item.Name + "\n" + err.Error())
+		}
+	}
+
+	go logger.run()
+	return &logger
 }

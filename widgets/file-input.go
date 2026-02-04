@@ -61,7 +61,7 @@ func (f *FileInput) OnInput(handler func(string)) {
 func (f *FileInput) QWidget() *qt.QWidget {
 	widget := qt.NewQWidget(nil)
 	widget.SetLayout(f.container.QLayout)
-	widget.SetFixedHeight(75)
+	widget.SetSizePolicy2(qt.QSizePolicy__Expanding, qt.QSizePolicy__Minimum)
 	return widget
 }
 
