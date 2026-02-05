@@ -1,0 +1,16 @@
+#mainTuxpitWindowContianer {
+	background-color: #0b0e11;
+}
+
+QPushButton {
+	border: none;
+	background-color: #1e2731;
+	color: white;
+	padding: 10px 20px 10px 20px;
+	font-size: 16pt;
+}
+
+QPushButton::hover {
+	background-color: #141a21;
+	color: white;
+}

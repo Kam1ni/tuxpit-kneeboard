@@ -7,8 +7,13 @@ import (
 	"tuxpit-kneeboard/config"
 	"tuxpit-kneeboard/inputlogger"
 
-	"github.com/mappu/miqt/qt"
+	_ "embed"
+
+	"github.com/mappu/miqt/qt6"
 )
+
+//go:embed style.qss
+var windowStyle string
 
 type View struct {
 	currentCategoryIndex int
@@ -16,29 +21,29 @@ type View struct {
 	aircraftCategory     *imageViewCategory
 	terrainCategory      *imageViewCategory
 	missionCategory      *imageViewCategory
-	widget               *qt.QWidget
+	widget               *qt6.QWidget
 	inputLogger          *inputlogger.InputLogger
 	bookmarks            []bookmark
-	bookmarksContainer   *qt.QVBoxLayout
+	bookmarksContainer   *qt6.QVBoxLayout
 	server               *net.UDPConn
 	config               config.Config
 	missionTmpDir        string
 	closed               bool
-	mainWindow           *qt.QMainWindow
+	mainWindow           *qt6.QMainWindow
 }
 
-func (v View) Widget() *qt.QWidget {
+func (v View) Widget() *qt6.QWidget {
 	return v.widget
 }
 
-func (v *View) NextImage() {
-	if v.categories[v.currentCategoryIndex].nextImage() {
+func (v *View) NextPage() {
+	if v.categories[v.currentCategoryIndex].nextPage() {
 		v.NextCategory()
 	}
 }
 
-func (v *View) PreviousImage() {
-	if v.categories[v.currentCategoryIndex].previousImage() {
+func (v *View) PreviousPage() {
+	if v.categories[v.currentCategoryIndex].previousPage() {
 		v.PreviousCategory()
 	}
 }
@@ -55,7 +60,7 @@ func (v *View) NextCategory() {
 	}
 	v.categories[v.currentCategoryIndex].currentImage = ""
 	fmt.Println(v.categories[v.currentCategoryIndex].currentImage)
-	v.NextImage()
+	v.NextPage()
 }
 
 func (v *View) PreviousCategory() {
@@ -69,7 +74,7 @@ func (v *View) PreviousCategory() {
 		}
 	}
 	v.categories[v.currentCategoryIndex].currentImage = ""
-	v.PreviousImage()
+	v.PreviousPage()
 }
 
 func (v *View) SelectCategory(catIndex int) {
@@ -78,16 +83,16 @@ func (v *View) SelectCategory(catIndex int) {
 	}
 	v.currentCategoryIndex = catIndex
 	v.categories[v.currentCategoryIndex].currentImage = ""
-	v.categories[v.currentCategoryIndex].nextImage()
+	v.categories[v.currentCategoryIndex].nextPage()
 }
 
 func (v *View) getSelectedCategory() *imageViewCategory {
 	return v.categories[v.currentCategoryIndex]
 }
 
-func CreateKneeboardView(conf config.Config, mainWindow *qt.QMainWindow) *View {
+func CreateKneeboardView(conf config.Config, mainWindow *qt6.QMainWindow) *View {
 	v := View{config: conf, mainWindow: mainWindow}
-	label := qt.NewQLabel3("")
+	label := qt6.NewQLabel3("")
 	label.SetScaledContents(true)
 
 	v.missionTmpDir = createMissionTmpDir()
@@ -101,25 +106,29 @@ func CreateKneeboardView(conf config.Config, mainWindow *qt.QMainWindow) *View {
 		v.missionCategory,
 	}
 
-	root := qt.NewQVBoxLayout2()
+	root := qt6.NewQVBoxLayout2()
+	root.SetContentsMargins(0, 0, 0, 0)
 	root.SetSpacing(0)
 
-	body := qt.NewQHBoxLayout2()
+	body := qt6.NewQHBoxLayout2()
 	body.SetSpacing(0)
-	v.bookmarksContainer = qt.NewQVBoxLayout2()
+	body.SetContentsMargins(0, 0, 0, 0)
 
-	bookmarksWidget := qt.NewQWidget2()
+	v.bookmarksContainer = qt6.NewQVBoxLayout2()
+	v.bookmarksContainer.SetSpacing(0)
+	v.bookmarksContainer.SetContentsMargins(0, 0, 0, 0)
+	bookmarksWidget := qt6.NewQWidget2()
 	bookmarksWidget.SetLayout(v.bookmarksContainer.QLayout)
-	bookmarksWidget.SetFixedWidth(50)
+	bookmarksWidget.SetFixedWidth(80)
 
 	v.createBookmarksBar()
 
 	body.AddWidget(bookmarksWidget)
 	body.AddWidget(label.QWidget)
 
-	bodyWidget := qt.NewQWidget(nil)
+	bodyWidget := qt6.NewQWidget(nil)
 	bodyWidget.SetLayout(body.QLayout)
-	bodyWidget.SetSizePolicy2(qt.QSizePolicy__Expanding, qt.QSizePolicy__Expanding)
+	bodyWidget.SetSizePolicy2(qt6.QSizePolicy__Expanding, qt6.QSizePolicy__Expanding)
 
 	bottomToolBar := createBottomToolbar(&v)
 	if bottomToolBar == nil {
@@ -133,15 +142,17 @@ func CreateKneeboardView(conf config.Config, mainWindow *qt.QMainWindow) *View {
 
 	initInputLoggert(&v)
 
-	widget := qt.NewQWidget(nil)
+	widget := qt6.NewQWidget(nil)
 	widget.SetLayout(root.QLayout)
+	widget.SetStyleSheet(windowStyle)
+	widget.SetObjectName(*qt6.NewQAnyStringView3("mainTuxpitWindowContianer"))
 	v.widget = widget
 
 	v.server = createServer(&v)
-	//	image := qt.NewQPixmap4("/home/kamil/Pictures/AI/Robokini.png")
+	//	image := qt6.NewQPixmap4("/home/kamil/Pictures/AI/Robokini.png")
 	//	label.SetPixmap(image)
 
-	v.NextImage()
+	v.NextPage()
 	return &v
 }
 

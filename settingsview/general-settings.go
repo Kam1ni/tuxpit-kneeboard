@@ -4,11 +4,11 @@ import (
 	"tuxpit-kneeboard/config"
 	"tuxpit-kneeboard/widgets"
 
-	"github.com/mappu/miqt/qt"
+	"github.com/mappu/miqt/qt6"
 )
 
-func createGeneralSettingsTab(conf *config.Config) *qt.QWidget {
-	content := qt.NewQVBoxLayout2()
+func createGeneralSettingsTab(conf *config.Config) *qt6.QWidget {
+	content := qt6.NewQVBoxLayout2()
 	gameInstallDirInput := widgets.NewFileInput3(conf.DcsInstallPath, "DCS Install directory")
 	gameInstallDirInput.OnInput(func(s string) {
 		conf.DcsInstallPath = s
@@ -19,7 +19,7 @@ func createGeneralSettingsTab(conf *config.Config) *qt.QWidget {
 		conf.DcsSavedGamesPath = s
 	})
 
-	portNumberInput := qt.NewQSpinBox2()
+	portNumberInput := qt6.NewQSpinBox2()
 	portNumberInput.SetMinimum(1)
 	portNumberInput.SetMaximum(65535)
 	portNumberInput.SetValue(int(conf.ServerPort))
@@ -32,7 +32,7 @@ func createGeneralSettingsTab(conf *config.Config) *qt.QWidget {
 	content.AddWidget(widgets.NewLabeledInput("Server port to communicate with DCS", portNumberInput.QWidget).QWidget())
 	content.AddStretch()
 
-	widget := qt.NewQWidget(nil)
+	widget := qt6.NewQWidget(nil)
 	widget.SetLayout(content.QLayout)
 	return widget
 }

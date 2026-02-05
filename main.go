@@ -6,14 +6,14 @@ import (
 	"tuxpit-kneeboard/config"
 	"tuxpit-kneeboard/kneeboardview"
 
-	"github.com/mappu/miqt/qt"
+	"github.com/mappu/miqt/qt6"
 )
 
 func main() {
-	qt.QGuiApplication_SetDesktopFileName("Tuxpit-Kneeboard")
-	qt.NewQApplication(os.Args)
+	qt6.QGuiApplication_SetDesktopFileName("Tuxpit-Kneeboard")
+	_ = qt6.NewQApplication(os.Args)
 
-	mainWindow := qt.NewQMainWindow2()
+	mainWindow := qt6.NewQMainWindow2()
 	mainWindow.SetWindowTitle("Tuxpit Kneeboard")
 
 	conf, err := config.ReadConfig()
@@ -30,10 +30,10 @@ func main() {
 	mainWindow.SetMinimumHeight(100)
 	mainWindow.SetMinimumWidth(100)
 	mainWindow.Show()
-	mainWindow.OnCloseEvent(func(super func(event *qt.QCloseEvent), event *qt.QCloseEvent) {
-		qt.QCoreApplication_Quit()
+	mainWindow.OnCloseEvent(func(super func(event *qt6.QCloseEvent), event *qt6.QCloseEvent) {
+		qt6.QCoreApplication_Quit()
 	})
-	qt.QApplication_Exec()
+	qt6.QApplication_Exec()
 
 	fmt.Println("OK")
 }

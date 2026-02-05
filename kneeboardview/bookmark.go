@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"math/rand/v2"
 
-	"github.com/mappu/miqt/qt"
 	"github.com/mappu/miqt/qt/mainthread"
+	"github.com/mappu/miqt/qt6"
 )
 
 type bookmark struct {
@@ -76,12 +76,12 @@ func (v *View) createBookmarksBar() {
 	}
 
 	for i, bm := range v.bookmarks {
-		btn := qt.NewQPushButton3(fmt.Sprintf("%d", i))
+		btn := qt6.NewQPushButton3(fmt.Sprintf("%d", i))
 		btn.Thread().MoveToThread(v.bookmarksContainer.Thread())
 		btn.OnClicked(func() {
 			v.selectBookmark(bm)
 		})
-		btn.SetFixedHeight(25)
+		btn.SetFixedHeight(40)
 		btn.SetStyleSheet(fmt.Sprintf("background-color: %s; color: %s;", bm.colors.backgroundColor, bm.colors.foregroundColor))
 		v.bookmarksContainer.AddWidget(btn.QWidget)
 	}

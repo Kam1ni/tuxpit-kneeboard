@@ -4,19 +4,19 @@ import (
 	"tuxpit-kneeboard/config"
 	"tuxpit-kneeboard/widgets"
 
-	"github.com/mappu/miqt/qt"
+	"github.com/mappu/miqt/qt6"
 )
 
 func CreateSettingsWindow(conf *config.Config) {
-	root := qt.NewQDialog2()
+	root := qt6.NewQDialog2()
 
 	tempConf := conf.Clone()
 
 	confirmButtons := widgets.NewFormConfirmButtons()
 
-	rootContainer := qt.NewQVBoxLayout2()
+	rootContainer := qt6.NewQVBoxLayout2()
 
-	tabs := qt.NewQTabWidget2()
+	tabs := qt6.NewQTabWidget2()
 	tabs.AddTab(createGeneralSettingsTab(&tempConf), "General")
 	tabs.AddTab(createKeybindsTabs(&tempConf), "Keybinds")
 
@@ -26,7 +26,7 @@ func CreateSettingsWindow(conf *config.Config) {
 	confirmButtons.OnConfirm(func() {
 		err := ensureDcsPluginIsInstalled(tempConf)
 		if err != nil {
-			qt.NewQMessageBox3(qt.QMessageBox__Critical, "Error", err.Error()).Exec()
+			qt6.NewQMessageBox3(qt6.QMessageBox__Critical, "Error", err.Error()).Exec()
 			return
 		}
 		*conf = tempConf

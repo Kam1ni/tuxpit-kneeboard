@@ -4,21 +4,38 @@ import (
 	"fmt"
 	"tuxpit-kneeboard/settingsview"
 
-	"github.com/mappu/miqt/qt"
+	"github.com/mappu/miqt/qt6"
 )
 
-func createBottomToolbar(v *View) *qt.QWidget {
-	root := qt.NewQHBoxLayout2()
+func createBottomToolbar(v *View) *qt6.QWidget {
+	root := qt6.NewQHBoxLayout2()
+	root.SetContentsMargins(0, 0, 0, 0)
+	root.SetSpacing(0)
 
-	clearBtn := qt.NewQPushButton3(" Clear bookmarks")
+	clearBtn := qt6.NewQPushButton3(" Clear bookmarks")
 	clearBtn.OnClicked(func() {
 		v.removeAllBookmarks()
 	})
 	root.AddWidget(clearBtn.QWidget)
 
-	root.AddStretch()
+	previousPageButton := qt6.NewQPushButton3("")
+	previousPageButton.OnClicked(func() {
+		v.PreviousPage()
+	})
+	previousPageButton.SetSizePolicy(*qt6.NewQSizePolicy2(qt6.QSizePolicy__Expanding, qt6.QSizePolicy__Ignored))
 
-	settingsButton := qt.NewQPushButton3(" Settings")
+	nextPageButton := qt6.NewQPushButton3("")
+	nextPageButton.OnClicked(func() {
+		v.NextPage()
+	})
+	nextPageButton.SetSizePolicy(*qt6.NewQSizePolicy2(qt6.QSizePolicy__Expanding, qt6.QSizePolicy__Ignored))
+
+	root.AddWidget(previousPageButton.QWidget)
+	root.AddWidget(nextPageButton.QWidget)
+
+	//	root.AddStretch()
+
+	settingsButton := qt6.NewQPushButton3(" Settings")
 	settingsButton.OnClicked(func() {
 		showSettings(v)
 	})
@@ -32,9 +49,9 @@ func createBottomToolbar(v *View) *qt.QWidget {
 
 	root.AddWidget(settingsButton.QWidget)
 
-	widget := qt.NewQWidget(nil)
+	widget := qt6.NewQWidget(nil)
 	widget.SetLayout(root.QLayout)
-	widget.SetSizePolicy2(qt.QSizePolicy__Expanding, qt.QSizePolicy__Minimum)
+	widget.SetSizePolicy2(qt6.QSizePolicy__Expanding, qt6.QSizePolicy__Minimum)
 	return widget
 }
 

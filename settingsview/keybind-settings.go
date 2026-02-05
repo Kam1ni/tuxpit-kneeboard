@@ -4,12 +4,12 @@ import (
 	"tuxpit-kneeboard/config"
 	"tuxpit-kneeboard/widgets"
 
-	"github.com/mappu/miqt/qt"
+	"github.com/mappu/miqt/qt6"
 )
 
-func createKeybindsTabs(conf *config.Config) *qt.QWidget {
-	root := qt.NewQScrollArea2()
-	contentBox := qt.NewQVBoxLayout2()
+func createKeybindsTabs(conf *config.Config) *qt6.QWidget {
+	root := qt6.NewQScrollArea2()
+	contentBox := qt6.NewQVBoxLayout2()
 
 	contentBox.AddWidget(widgets.NewKeybindSetting2(conf.Keybinds.NextPage, "Next page", func(binds []config.Keybind) { conf.Keybinds.NextPage = binds }).QWidget())
 	contentBox.AddWidget(widgets.NewKeybindSetting2(conf.Keybinds.PreviousPage, "Previous page", func(binds []config.Keybind) { conf.Keybinds.PreviousPage = binds }).QWidget())
@@ -21,13 +21,13 @@ func createKeybindsTabs(conf *config.Config) *qt.QWidget {
 	contentBox.AddWidget(widgets.NewKeybindSetting2(conf.Keybinds.ToggleWindow, "Toggle window", func(binds []config.Keybind) { conf.Keybinds.ToggleWindow = binds }).QWidget())
 	contentBox.AddStretch()
 
-	root.SetVerticalScrollBarPolicy(qt.ScrollBarAsNeeded)
+	root.SetVerticalScrollBarPolicy(qt6.ScrollBarAsNeeded)
 	root.SetWidgetResizable(true)
 
-	widget := qt.NewQWidget2()
+	widget := qt6.NewQWidget2()
 	widget.SetLayout(contentBox.QLayout)
 	root.SetWidget(widget)
-	//widget := qt.NewQWidget2()
+	//widget := qt6.NewQWidget2()
 	//widget.SetLayout(contentBox.QLayout)
 	return root.QWidget
 }

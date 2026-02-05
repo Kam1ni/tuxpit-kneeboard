@@ -64,7 +64,7 @@ func (view *View) onAircraftReceived(aircraftName string) {
 	view.aircraftCategory.dir = GetDcsAircraftDir(view.config, aircraftName)
 	view.aircraftCategory.loadImages()
 	if view.getSelectedCategory() == view.aircraftCategory {
-		view.aircraftCategory.nextImage()
+		view.aircraftCategory.nextPage()
 	}
 }
 
@@ -74,7 +74,7 @@ func (view *View) onTerrainReceived(terrainName string) {
 	view.terrainCategory.dir = newDir
 	view.terrainCategory.loadImages()
 	if view.getSelectedCategory() == view.terrainCategory {
-		view.terrainCategory.nextImage()
+		view.terrainCategory.nextPage()
 	}
 }
 
@@ -126,7 +126,7 @@ func (view *View) onMissionReceived(pth string) {
 	view.missionCategory.dir = view.missionTmpDir
 	view.missionCategory.loadImages()
 	if view.getSelectedCategory() == view.missionCategory {
-		view.missionCategory.nextImage()
+		view.missionCategory.nextPage()
 	}
 }
 

@@ -4,28 +4,28 @@ import (
 	"tuxpit-kneeboard/config"
 	"tuxpit-kneeboard/inputlogger"
 
-	"github.com/mappu/miqt/qt"
 	"github.com/mappu/miqt/qt/mainthread"
+	"github.com/mappu/miqt/qt6"
 )
 
 type KeybindSetting struct {
-	rootElement    *qt.QGroupBox
-	content        *qt.QVBoxLayout
+	rootElement    *qt6.QGroupBox
+	content        *qt6.QVBoxLayout
 	onConfigUpdate func([]config.Keybind)
 	binds          []config.Keybind
 }
 
-func (k *KeybindSetting) QWidget() *qt.QWidget {
+func (k *KeybindSetting) QWidget() *qt6.QWidget {
 	return k.rootElement.QWidget
 }
 
 func NewKeybindSetting(binds []config.Keybind, label string) *KeybindSetting {
 	result := KeybindSetting{
-		rootElement: qt.NewQGroupBox3(label),
-		content:     qt.NewQVBoxLayout2(),
+		rootElement: qt6.NewQGroupBox3(label),
+		content:     qt6.NewQVBoxLayout2(),
 		binds:       binds,
 	}
-	result.rootElement.SetSizePolicy2(qt.QSizePolicy__Expanding, qt.QSizePolicy__Minimum)
+	result.rootElement.SetSizePolicy2(qt6.QSizePolicy__Expanding, qt6.QSizePolicy__Minimum)
 
 	result.populateBinds()
 
@@ -43,17 +43,18 @@ func (k *KeybindSetting) OnConfigUpdate(handler func([]config.Keybind)) {
 	k.onConfigUpdate = handler
 }
 
-func (k *KeybindSetting) createBindingWidget(bind config.Keybind) *qt.QWidget {
-	box := qt.NewQHBoxLayout2()
-	label := qt.NewQLabel3(bind.ToString())
-	label.SetSizePolicy2(qt.QSizePolicy__Expanding, qt.QSizePolicy__Fixed)
+func (k *KeybindSetting) createBindingWidget(bind config.Keybind) *qt6.QWidget {
+	box := qt6.NewQHBoxLayout2()
+	box.SetContentsMargins(0, 0, 0, 0)
+	label := qt6.NewQLabel3(bind.ToString())
+	label.SetSizePolicy2(qt6.QSizePolicy__Expanding, qt6.QSizePolicy__Fixed)
 
-	deleteButton := qt.NewQPushButton3("Remove")
+	deleteButton := qt6.NewQPushButton3("Remove")
 
 	box.AddWidget(label.QWidget)
 	box.AddWidget(deleteButton.QWidget)
 
-	widget := qt.NewQWidget2()
+	widget := qt6.NewQWidget2()
 	widget.SetLayout(box.Layout())
 
 	deleteButton.OnClicked(func() {
@@ -80,7 +81,7 @@ func (k *KeybindSetting) populateBinds() {
 	for _, bind := range k.binds {
 		k.content.AddWidget(k.createBindingWidget(bind))
 	}
-	addButton := qt.NewQPushButton3("Add bind")
+	addButton := qt6.NewQPushButton3("Add bind")
 	addButton.OnClicked(func() {
 		binding := k.addBinding()
 		if binding == nil {
@@ -98,14 +99,14 @@ func (k *KeybindSetting) populateBinds() {
 }
 
 func (k *KeybindSetting) addBinding() *config.Keybind {
-	window := qt.NewQDialog2()
+	window := qt6.NewQDialog2()
 
 	var result *config.Keybind = nil
 
-	root := qt.NewQVBoxLayout2()
-	label := qt.NewQLabel3("Press any button")
-	label.SetAlignment(qt.AlignCenter)
-	label.SetSizePolicy2(qt.QSizePolicy__Expanding, qt.QSizePolicy__Expanding)
+	root := qt6.NewQVBoxLayout2()
+	label := qt6.NewQLabel3("Press any button")
+	label.SetAlignment(qt6.AlignCenter)
+	label.SetSizePolicy2(qt6.QSizePolicy__Expanding, qt6.QSizePolicy__Expanding)
 	label.GrabKeyboard()
 	defer label.ReleaseKeyboard()
 
@@ -142,7 +143,7 @@ func (k *KeybindSetting) addBinding() *config.Keybind {
 			logger.Close()
 		}
 	}()
-	qt.QCoreApplication_ProcessEvents()
+	qt6.QCoreApplication_ProcessEvents()
 	window.Exec()
 	return result
 

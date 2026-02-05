@@ -18,10 +18,10 @@ func KeybindMatches(kb []config.Keybind, devName string, key int) bool {
 func onKeyPress(v *View, deviceName string, key int) {
 	fmt.Printf("Got event %s %d\n", deviceName, key)
 	if KeybindMatches(v.config.Keybinds.NextPage, deviceName, key) {
-		v.NextImage()
+		v.NextPage()
 	}
 	if KeybindMatches(v.config.Keybinds.PreviousPage, deviceName, key) {
-		v.PreviousImage()
+		v.PreviousPage()
 	}
 	if KeybindMatches(v.config.Keybinds.NextCategory, deviceName, key) {
 		v.NextCategory()
@@ -30,6 +30,7 @@ func onKeyPress(v *View, deviceName string, key int) {
 		v.PreviousCategory()
 	}
 	if KeybindMatches(v.config.Keybinds.ToggleBookmark, deviceName, key) {
+		fmt.Println("Toggling bookmark")
 		v.toggleBookmark(bookmark{category: v.currentCategoryIndex, imagePath: v.getSelectedCategory().currentImage})
 	}
 	if KeybindMatches(v.config.Keybinds.NextBookmark, deviceName, key) {

@@ -9,7 +9,7 @@ import (
 	"strings"
 	"tuxpit-kneeboard/config"
 
-	"github.com/mappu/miqt/qt"
+	"github.com/mappu/miqt/qt6"
 )
 
 var ValidImageFileRegex = regexp.MustCompile(`(\.png|\.jpe?g)`)
@@ -49,7 +49,7 @@ type imageViewCategory struct {
 	currentImage string
 	sortedImages []string
 	dir          string
-	label        *qt.QLabel
+	label        *qt6.QLabel
 }
 
 func (i *imageViewCategory) loadImages() {
@@ -75,12 +75,12 @@ func (i *imageViewCategory) loadImages() {
 }
 
 func (v *imageViewCategory) loadImage(imgPath string) {
-	pxmap := qt.NewQPixmap4(imgPath)
+	pxmap := qt6.NewQPixmap4(imgPath)
 	v.label.SetPixmap(pxmap)
 	v.currentImage = imgPath
 }
 
-func (v *imageViewCategory) nextImage() bool {
+func (v *imageViewCategory) nextPage() bool {
 	if len(v.sortedImages) == 0 {
 		return false
 	}
@@ -99,7 +99,7 @@ func (v *imageViewCategory) nextImage() bool {
 	return false
 }
 
-func (v *imageViewCategory) previousImage() bool {
+func (v *imageViewCategory) previousPage() bool {
 	if len(v.sortedImages) == 0 {
 		return false
 	}
@@ -118,7 +118,7 @@ func (v *imageViewCategory) previousImage() bool {
 	return false
 }
 
-func NewImageViewCategory(name string, dir string, label *qt.QLabel) *imageViewCategory {
+func NewImageViewCategory(name string, dir string, label *qt6.QLabel) *imageViewCategory {
 	view := imageViewCategory{name: name, dir: dir, label: label}
 	view.loadImages()
 	return &view
