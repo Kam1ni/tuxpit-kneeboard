@@ -1,6 +1,7 @@
 package settingsview
 
 import (
+	"fmt"
 	"tuxpit-kneeboard/config"
 	"tuxpit-kneeboard/widgets"
 
@@ -9,6 +10,7 @@ import (
 
 func createGeneralSettingsTab(conf *config.Config) *qt6.QWidget {
 	content := qt6.NewQVBoxLayout2()
+	content.SetContentsMargins(18, 18, 18, 18)
 	gameInstallDirInput := widgets.NewFileInput3(conf.DcsInstallPath, "DCS Install directory")
 	gameInstallDirInput.OnInput(func(s string) {
 		conf.DcsInstallPath = s
@@ -27,9 +29,27 @@ func createGeneralSettingsTab(conf *config.Config) *qt6.QWidget {
 		conf.ServerPort = uint16(value)
 	})
 
+	dayNightModeInput := qt6.NewQCheckBox3("Toggle day/night mode button enabled")
+	dayNightModeInput.SetToolTip(`Adds the option to sort for only kneeboard pages that do not contain "_Day_" or "_Night_" in the filename`)
+	dayNightModeOrignalValue := conf.DayNightMode
+	fmt.Println(dayNightModeOrignalValue, dayNightModeOrignalValue != config.DAY_NIGHT_MODE_DISABLED)
+	dayNightModeInput.SetChecked(dayNightModeOrignalValue != config.DAY_NIGHT_MODE_DISABLED)
+	dayNightModeInput.OnClickedWithChecked(func(checked bool) {
+		if !checked {
+			conf.DayNightMode = config.DAY_NIGHT_MODE_DISABLED
+			return
+		}
+		if dayNightModeOrignalValue == config.DAY_NIGHT_MODE_DISABLED {
+			conf.DayNightMode = config.DAY_NIGHT_MODE_DAY
+			return
+		}
+		conf.DayNightMode = dayNightModeOrignalValue
+	})
+
 	content.AddWidget(gameInstallDirInput.QWidget())
 	content.AddWidget(savedGamesDirInput.QWidget())
 	content.AddWidget(widgets.NewLabeledInput("Server port to communicate with DCS", portNumberInput.QWidget).QWidget())
+	content.AddWidget(dayNightModeInput.QWidget)
 	content.AddStretch()
 
 	widget := qt6.NewQWidget(nil)

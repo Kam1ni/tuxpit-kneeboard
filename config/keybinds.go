@@ -13,14 +13,15 @@ type Keybind struct {
 }
 
 type Keybinds struct {
-	NextPage         []Keybind `json:"nextPage"`
-	PreviousPage     []Keybind `json:"previousPage"`
-	NextCategory     []Keybind `json:"nextCategory"`
-	PreviousCategory []Keybind `json:"previousCategory"`
-	ToggleBookmark   []Keybind `json:"toggleBookmark"`
-	NextBookmark     []Keybind `json:"nextBookmark"`
-	PreviousBookmark []Keybind `json:"previousBookmark"`
-	ToggleWindow     []Keybind `json:"toggleWindow"`
+	NextPage           []Keybind `json:"nextPage"`
+	PreviousPage       []Keybind `json:"previousPage"`
+	NextCategory       []Keybind `json:"nextCategory"`
+	PreviousCategory   []Keybind `json:"previousCategory"`
+	ToggleBookmark     []Keybind `json:"toggleBookmark"`
+	NextBookmark       []Keybind `json:"nextBookmark"`
+	PreviousBookmark   []Keybind `json:"previousBookmark"`
+	ToggleWindow       []Keybind `json:"toggleWindow"`
+	ToggleDayNightMode []Keybind `json:"toggleDayNightMode"`
 }
 
 func (k Keybinds) GetAllDeviceNames() []string {
@@ -43,6 +44,7 @@ func (k Keybinds) GetAllDeviceNames() []string {
 	addDeviceNames(k.NextBookmark)
 	addDeviceNames(k.PreviousBookmark)
 	addDeviceNames(k.ToggleWindow)
+	addDeviceNames(k.ToggleDayNightMode)
 
 	return allNames
 }
@@ -55,14 +57,15 @@ func (k Keybinds) Clone() Keybinds {
 	}
 
 	return Keybinds{
-		NextPage:         cloneBinds(k.NextPage),
-		PreviousPage:     cloneBinds(k.PreviousPage),
-		NextCategory:     cloneBinds(k.NextCategory),
-		PreviousCategory: cloneBinds(k.PreviousCategory),
-		ToggleBookmark:   cloneBinds(k.ToggleBookmark),
-		NextBookmark:     cloneBinds(k.NextBookmark),
-		PreviousBookmark: cloneBinds(k.PreviousBookmark),
-		ToggleWindow:     cloneBinds(k.ToggleWindow),
+		NextPage:           cloneBinds(k.NextPage),
+		PreviousPage:       cloneBinds(k.PreviousPage),
+		NextCategory:       cloneBinds(k.NextCategory),
+		PreviousCategory:   cloneBinds(k.PreviousCategory),
+		ToggleBookmark:     cloneBinds(k.ToggleBookmark),
+		NextBookmark:       cloneBinds(k.NextBookmark),
+		PreviousBookmark:   cloneBinds(k.PreviousBookmark),
+		ToggleWindow:       cloneBinds(k.ToggleWindow),
+		ToggleDayNightMode: cloneBinds(k.ToggleDayNightMode),
 	}
 }
 

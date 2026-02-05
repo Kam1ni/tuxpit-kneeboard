@@ -40,6 +40,7 @@ func NewFileInput() *FileInput {
 	result.container = qt6.NewQVBoxLayout2()
 	result.container.AddWidget(result.label.QWidget)
 	result.container.AddWidget(inputContainerWidget)
+	result.container.SetContentsMargins(0, 0, 0, 0)
 
 	return &result
 }

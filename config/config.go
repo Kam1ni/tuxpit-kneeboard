@@ -8,12 +8,19 @@ import (
 	"strings"
 )
 
+type DayNightModaType uint8
+
+const DAY_NIGHT_MODE_DISABLED DayNightModaType = 0
+const DAY_NIGHT_MODE_DAY DayNightModaType = 1
+const DAY_NIGHT_MODE_NIGHT DayNightModaType = 2
+
 type Config struct {
-	ComesFromFile     bool     `json:"-"`
-	Keybinds          Keybinds `json:"keybinds"`
-	DcsInstallPath    string   `json:"dcsInstallPath"`
-	DcsSavedGamesPath string   `json:"dcsSavedGamesPath"`
-	ServerPort        uint16   `json:"serverPort"`
+	ComesFromFile     bool             `json:"-"`
+	Keybinds          Keybinds         `json:"keybinds"`
+	DcsInstallPath    string           `json:"dcsInstallPath"`
+	DcsSavedGamesPath string           `json:"dcsSavedGamesPath"`
+	ServerPort        uint16           `json:"serverPort"`
+	DayNightMode      DayNightModaType `json:"dayNightMode"`
 }
 
 func (c Config) Clone() Config {
@@ -22,6 +29,7 @@ func (c Config) Clone() Config {
 		DcsInstallPath:    c.DcsInstallPath,
 		DcsSavedGamesPath: c.DcsSavedGamesPath,
 		ServerPort:        c.ServerPort,
+		DayNightMode:      c.DayNightMode,
 	}
 }
 

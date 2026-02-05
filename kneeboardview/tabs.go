@@ -10,6 +10,7 @@ func createTabs(v *View) *qt6.QWidget {
 	for i, cat := range v.categories {
 		btn := qt6.NewQPushButton3(cat.name)
 		tabs.AddWidget(btn.QWidget)
+		btn.SetFocusPolicy(qt6.ClickFocus)
 		btn.OnClicked(func() {
 			v.SelectCategory(i)
 		})

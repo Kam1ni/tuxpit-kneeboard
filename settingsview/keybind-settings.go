@@ -19,6 +19,7 @@ func createKeybindsTabs(conf *config.Config) *qt6.QWidget {
 	contentBox.AddWidget(widgets.NewKeybindSetting2(conf.Keybinds.NextBookmark, "Next bookmark", func(binds []config.Keybind) { conf.Keybinds.NextBookmark = binds }).QWidget())
 	contentBox.AddWidget(widgets.NewKeybindSetting2(conf.Keybinds.PreviousBookmark, "Previous bookmark", func(binds []config.Keybind) { conf.Keybinds.PreviousBookmark = binds }).QWidget())
 	contentBox.AddWidget(widgets.NewKeybindSetting2(conf.Keybinds.ToggleWindow, "Toggle window", func(binds []config.Keybind) { conf.Keybinds.ToggleWindow = binds }).QWidget())
+	contentBox.AddWidget(widgets.NewKeybindSetting2(conf.Keybinds.ToggleDayNightMode, "Toggle day/night mode", func(binds []config.Keybind) { conf.Keybinds.ToggleDayNightMode = binds }).QWidget())
 	contentBox.AddStretch()
 
 	root.SetVerticalScrollBarPolicy(qt6.ScrollBarAsNeeded)

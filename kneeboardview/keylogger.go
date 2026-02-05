@@ -46,6 +46,16 @@ func onKeyPress(v *View, deviceName string, key int) {
 			v.mainWindow.Hide()
 		}
 	}
+	if KeybindMatches(v.config.Keybinds.ToggleDayNightMode, deviceName, key) {
+		switch v.config.DayNightMode {
+		case config.DAY_NIGHT_MODE_DISABLED:
+			return
+		case config.DAY_NIGHT_MODE_DAY:
+			v.SetDayNightMode(config.DAY_NIGHT_MODE_NIGHT)
+		case config.DAY_NIGHT_MODE_NIGHT:
+			v.SetDayNightMode(config.DAY_NIGHT_MODE_DAY)
+		}
+	}
 }
 
 func initInputLoggert(v *View) {

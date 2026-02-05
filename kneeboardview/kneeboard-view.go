@@ -30,10 +30,17 @@ type View struct {
 	missionTmpDir        string
 	closed               bool
 	mainWindow           *qt6.QMainWindow
+	bottomToolbar        *bottomToolbar
 }
 
 func (v View) Widget() *qt6.QWidget {
 	return v.widget
+}
+
+func (v View) ReloadImages() {
+	for _, cat := range v.categories {
+		cat.reloadImages()
+	}
 }
 
 func (v *View) NextPage() {
@@ -86,6 +93,22 @@ func (v *View) SelectCategory(catIndex int) {
 	v.categories[v.currentCategoryIndex].nextPage()
 }
 
+func (v *View) SetDayNightMode(mode config.DayNightModaType) {
+	v.config.DayNightMode = mode
+	switch v.config.DayNightMode {
+	case config.DAY_NIGHT_MODE_DISABLED:
+		v.bottomToolbar.toggleDayNightModeButton.SetVisible(false)
+	case config.DAY_NIGHT_MODE_DAY:
+		v.bottomToolbar.toggleDayNightModeButton.SetVisible(true)
+		v.bottomToolbar.toggleDayNightModeButton.SetText("Day")
+	case config.DAY_NIGHT_MODE_NIGHT:
+		v.bottomToolbar.toggleDayNightModeButton.SetVisible(true)
+		v.bottomToolbar.toggleDayNightModeButton.SetText("Night")
+	}
+	v.ReloadImages()
+	_ = config.WriteConfig(v.config)
+}
+
 func (v *View) getSelectedCategory() *imageViewCategory {
 	return v.categories[v.currentCategoryIndex]
 }
@@ -96,9 +119,9 @@ func CreateKneeboardView(conf config.Config, mainWindow *qt6.QMainWindow) *View 
 	label.SetScaledContents(true)
 
 	v.missionTmpDir = createMissionTmpDir()
-	v.aircraftCategory = NewImageViewCategory("Aircraft", GetDcsAircraftDir(conf, ""), label)
-	v.terrainCategory = NewImageViewCategory("Terrain", GetDcsTerrainDir(conf, ""), label)
-	v.missionCategory = NewImageViewCategory("Mission", v.missionTmpDir, label)
+	v.aircraftCategory = NewImageViewCategory("Aircraft", GetDcsAircraftDir(conf, ""), label, &v)
+	v.terrainCategory = NewImageViewCategory("Terrain", GetDcsTerrainDir(conf, ""), label, &v)
+	v.missionCategory = NewImageViewCategory("Mission", v.missionTmpDir, label, &v)
 
 	v.categories = []*imageViewCategory{
 		v.aircraftCategory,
@@ -130,15 +153,15 @@ func CreateKneeboardView(conf config.Config, mainWindow *qt6.QMainWindow) *View 
 	bodyWidget.SetLayout(body.QLayout)
 	bodyWidget.SetSizePolicy2(qt6.QSizePolicy__Expanding, qt6.QSizePolicy__Expanding)
 
-	bottomToolBar := createBottomToolbar(&v)
-	if bottomToolBar == nil {
+	v.bottomToolbar = createBottomToolbar(&v)
+	if v.bottomToolbar == nil {
 		v.Close()
 		return nil
 	}
 
 	root.AddWidget(createTabs(&v))
 	root.AddWidget(bodyWidget)
-	root.AddWidget(bottomToolBar)
+	root.AddWidget(v.bottomToolbar.Widget())
 
 	initInputLoggert(&v)
 

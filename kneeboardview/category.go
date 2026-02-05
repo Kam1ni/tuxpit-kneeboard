@@ -5,6 +5,7 @@ import (
 	"os"
 	"path"
 	"regexp"
+	"slices"
 	"sort"
 	"strings"
 	"tuxpit-kneeboard/config"
@@ -50,6 +51,36 @@ type imageViewCategory struct {
 	sortedImages []string
 	dir          string
 	label        *qt6.QLabel
+	view         *View
+}
+
+func (i *imageViewCategory) reloadImages() {
+	currentImageName := path.Base(i.currentImage)
+	i.loadImages()
+	if i.view.config.DayNightMode == config.DAY_NIGHT_MODE_DISABLED {
+		return
+	}
+	if i.view.config.DayNightMode == config.DAY_NIGHT_MODE_DAY && strings.Contains(currentImageName, "_Day_") {
+		return
+	}
+	if i.view.config.DayNightMode == config.DAY_NIGHT_MODE_NIGHT && strings.Contains(currentImageName, "_Night_") {
+		return
+	}
+	switch i.view.config.DayNightMode {
+	case config.DAY_NIGHT_MODE_DAY:
+		currentImageName = strings.ReplaceAll(currentImageName, "_Night_", "_Day_")
+	case config.DAY_NIGHT_MODE_NIGHT:
+		currentImageName = strings.ReplaceAll(currentImageName, "_Day_", "_Night_")
+	}
+	fullPath := path.Join(i.dir, currentImageName)
+	if !slices.Contains(i.sortedImages, fullPath) {
+		return
+	}
+	i.currentImage = fullPath
+	if i.view.getSelectedCategory() != i {
+		return
+	}
+	i.loadImage(i.currentImage)
 }
 
 func (i *imageViewCategory) loadImages() {
@@ -65,9 +96,16 @@ func (i *imageViewCategory) loadImages() {
 		if item.IsDir() {
 			continue
 		}
-		if ValidImageFileRegex.MatchString(item.Name()) {
-			list = append(list, path.Join(i.dir, item.Name()))
+		if !ValidImageFileRegex.MatchString(item.Name()) {
+			continue
 		}
+		if i.view.config.DayNightMode == config.DAY_NIGHT_MODE_DAY && strings.Contains(item.Name(), "_Night_") {
+			continue
+		}
+		if i.view.config.DayNightMode == config.DAY_NIGHT_MODE_NIGHT && strings.Contains(item.Name(), "_Day_") {
+			continue
+		}
+		list = append(list, path.Join(i.dir, item.Name()))
 	}
 
 	sort.Strings(list)
@@ -118,8 +156,8 @@ func (v *imageViewCategory) previousPage() bool {
 	return false
 }
 
-func NewImageViewCategory(name string, dir string, label *qt6.QLabel) *imageViewCategory {
-	view := imageViewCategory{name: name, dir: dir, label: label}
-	view.loadImages()
-	return &view
+func NewImageViewCategory(name string, dir string, label *qt6.QLabel, view *View) *imageViewCategory {
+	cat := imageViewCategory{name: name, dir: dir, label: label, view: view}
+	cat.loadImages()
+	return &cat
 }

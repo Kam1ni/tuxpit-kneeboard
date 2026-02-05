@@ -27,6 +27,7 @@ func NewLabeledInput(label string, content *qt6.QWidget) *LabeledInput {
 	result.container = qt6.NewQVBoxLayout2()
 	result.container.AddWidget(result.label.QWidget)
 	result.container.AddWidget(content)
+	result.container.SetContentsMargins(0, 0, 0, 0)
 
 	return &result
 }

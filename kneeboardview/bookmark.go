@@ -76,11 +76,12 @@ func (v *View) createBookmarksBar() {
 	}
 
 	for i, bm := range v.bookmarks {
-		btn := qt6.NewQPushButton3(fmt.Sprintf("%d", i))
+		btn := qt6.NewQPushButton3(fmt.Sprintf("%d", i+1))
 		btn.Thread().MoveToThread(v.bookmarksContainer.Thread())
 		btn.OnClicked(func() {
 			v.selectBookmark(bm)
 		})
+		btn.SetFocusPolicy(qt6.ClickFocus)
 		btn.SetFixedHeight(40)
 		btn.SetStyleSheet(fmt.Sprintf("background-color: %s; color: %s;", bm.colors.backgroundColor, bm.colors.foregroundColor))
 		v.bookmarksContainer.AddWidget(btn.QWidget)
