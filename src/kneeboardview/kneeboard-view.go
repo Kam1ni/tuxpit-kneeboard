@@ -94,6 +94,12 @@ func (v *View) SelectCategory(catIndex int) {
 }
 
 func (v *View) SetDayNightMode(mode config.DayNightModaType) {
+	if v.bottomToolbar == nil {
+		return
+	}
+	if v.bottomToolbar.toggleDayNightModeButton == nil {
+		return
+	}
 	v.config.DayNightMode = mode
 	switch v.config.DayNightMode {
 	case config.DAY_NIGHT_MODE_DISABLED:
