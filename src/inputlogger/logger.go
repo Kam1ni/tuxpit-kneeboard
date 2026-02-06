@@ -80,7 +80,8 @@ func newKeyboardLogger(inputLogger *InputLogger) *logger {
 	result := logger{name: "_KEYBOARD_", inputLogger: inputLogger}
 	allKeyboards, err := findKeyboards()
 	if err != nil {
-		panic("Failed to find keyboards\n" + err.Error())
+		fmt.Println("Failed to find keyboards\n" + err.Error())
+		return &result
 	}
 	for _, keyboard := range allKeyboards {
 		kb, err := keylogger.New(path.Join("/dev/input", keyboard))
