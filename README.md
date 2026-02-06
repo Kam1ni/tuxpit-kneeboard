@@ -8,7 +8,18 @@ Tuxpit kneeboard is an overlay application to display kneeboard pages from Digit
 * Keyboard and controller keybinds
 * Day/Night mode
 
-## Building
+## Installation
+Arch linux users can install it from the AUR using their prefered AUR helper
+```bash
+# For yay
+yay -S tuxpit-kneeboard
+
+# For paru
+paru -S tuxpit-kneeboard
+```
+
+
+## Build from source
 Make sure you have gcc, golang and qt6 installed on your system.
 
 ```bash
