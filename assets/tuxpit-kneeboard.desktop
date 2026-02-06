@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Tuxpit Kneeboard
+Comment=Kneeboard overlay for Digital Combat Simulator
+Exec=/usr/bin/tuxpit-kneeboard
+Icon=tuxpit-kneeboard
+Type=Application
+Categories=Utility;Game
