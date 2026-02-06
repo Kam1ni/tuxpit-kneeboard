@@ -10,7 +10,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/mappu/miqt/qt/mainthread"
+	"github.com/mappu/miqt/qt6/mainthread"
 )
 
 var savedGamesPath = regexp.MustCompile(`^C:\\users\\steamusers\\Saved Games\\DCS`)

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"math/rand/v2"
 
-	"github.com/mappu/miqt/qt/mainthread"
 	"github.com/mappu/miqt/qt6"
+	"github.com/mappu/miqt/qt6/mainthread"
 )
 
 type bookmark struct {
