@@ -29,6 +29,9 @@ func main() {
 	mainWindow.SetCentralWidget(view.Widget())
 	mainWindow.SetMinimumHeight(100)
 	mainWindow.SetMinimumWidth(100)
+	mainWindow.Resize(700, 1000)
+	mainWindow.SetWindowFlag2(qt6.Tool, true)
+	mainWindow.SetWindowFlag2(qt6.WindowStaysOnTopHint, true)
 	mainWindow.Show()
 	mainWindow.OnCloseEvent(func(super func(event *qt6.QCloseEvent), event *qt6.QCloseEvent) {
 		qt6.QCoreApplication_Quit()
